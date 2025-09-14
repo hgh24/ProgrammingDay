@@ -12,7 +12,7 @@
 
                 input = Console.ReadLine();
 
-
+                Console.WriteLine("you entered: "+input);
 
 
             }while(input != "-999");
