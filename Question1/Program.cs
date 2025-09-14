@@ -6,9 +6,9 @@
         {
             Console.WriteLine("Hello, World!");
 
-            string input = "4 [1, 2, 1, 1, 3, 2, 3, 3, 1, 5, 1, 2, 1, 2, 3, 4]";
+            string input = "[[1,2,3][4,5,6][7,8,9]]";
 
-            var matrix = MatrixHelper.StringToSquareMatrix(input);
+            var matrix = MatrixParser.ConvertStringToMatrix(input);
 
             Console.WriteLine(matrix[0, 2]);
 
