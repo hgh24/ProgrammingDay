@@ -1,61 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 
-public class MatrixParser
+public class MatrixHelper
 {
-    public static int[,] ConvertStringToMatrix(string input)
+    /// <summary>
+    /// Converts a string like:
+    /// "4 [1, 2, 1, 1, 3, 2, 3, 3, 1, 5, 1, 2, 1, 2, 3, 4]"
+    /// into a square matrix of size 4x4.
+    /// </summary>
+    public static int[,] StringToSquareMatrix(string input)
     {
-        if (string.IsNullOrWhiteSpace(input))
-            throw new ArgumentException("Input string is null or empty.");
+        // Split input into dimension and numbers
+        var parts = input.Split('[', ']');
+        int dimension = int.Parse(parts[0].Trim());
 
-        // Remove the outer brackets
-        input = input.Trim();
-        if (input.StartsWith("[[") && input.EndsWith("]]"))
-        {
-            input = input.Substring(1, input.Length - 2); // Remove first and last bracket
-        }
-        else
-        {
-            throw new FormatException("Invalid matrix format.");
-        }
+        var numbers = parts[1]
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(x => int.Parse(x.Trim()))
+            .ToArray();
 
-        // Split into rows using a custom method
-        List<string> rows = new List<string>();
-        int start = 0;
-        for (int i = 0; i < input.Length; i++)
+        if (numbers.Length != dimension * dimension)
+            throw new ArgumentException("Number of elements does not match matrix size.");
+
+        int[,] matrix = new int[dimension, dimension];
+        int index = 0;
+
+        for (int i = 0; i < dimension; i++)
         {
-            if (input[i] == '[')
+            for (int j = 0; j < dimension; j++)
             {
-                start = i + 1;
-            }
-            else if (input[i] == ']')
-            {
-                rows.Add(input.Substring(start, i - start));
+                matrix[i, j] = numbers[index++];
             }
         }
 
-        // Parse each row
-        int rowCount = rows.Count;
-        int[][] temp = new int[rowCount][];
-        int colCount = -1;
-
-        for (int i = 0; i < rowCount; i++)
-        {
-            var elements = rows[i].Split(',');
-            temp[i] = Array.ConvertAll(elements, int.Parse);
-
-            if (colCount == -1)
-                colCount = temp[i].Length;
-            else if (colCount != temp[i].Length)
-                throw new FormatException("Inconsistent row lengths in matrix.");
-        }
-
-        // Convert to 2D array
-        int[,] result = new int[rowCount, colCount];
-        for (int i = 0; i < rowCount; i++)
-            for (int j = 0; j < colCount; j++)
-                result[i, j] = temp[i][j];
-
-        return result;
+        return matrix;
     }
 }
